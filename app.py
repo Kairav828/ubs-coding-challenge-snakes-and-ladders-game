@@ -19,23 +19,22 @@ def parse_svg_board(svg_xml):
     width_squares = round(width_px / SQUARE_SIZE)
     height_squares = round(height_px / SQUARE_SIZE)
     total_squares = width_squares * height_squares
-
     jumps = {}
-
     for elem in tree.iter():
         if elem.tag.endswith('line'):
-            x1 = float(elem.attrib.get('x1', -1))
-            y1 = float(elem.attrib.get('y1', -1))
-            x2 = float(elem.attrib.get('x2', -1))
-            y2 = float(elem.attrib.get('y2', -1))
-
+            stroke = elem.attrib.get('stroke', '').strip().lower()
+            # Accept only snake or ladder colors
+            if stroke not in ['green', 'red', '#00ff00', '#ff0000']:
+                continue
+            x1, y1 = float(elem.attrib['x1']), float(elem.attrib['y1'])
+            x2, y2 = float(elem.attrib['x2']), float(elem.attrib['y2'])
             start_sq = coord_to_square(x1, y1, width_squares, height_squares)
             end_sq = coord_to_square(x2, y2, width_squares, height_squares)
             if start_sq and end_sq:
                 jumps[start_sq] = end_sq
-
-    logger.info(f"Board: {width_squares}x{height_squares}={total_squares} squares, Jumps: {len(jumps)}")
+                print(f"Jump from {start_sq} to {end_sq} with color {stroke}")
     return width_squares, height_squares, total_squares, jumps
+
 
 def coord_to_square(x, y, width, height):
     """Convert (x, y) in pixels to 1-based square ID, bottom-left=1, top-left=last."""
