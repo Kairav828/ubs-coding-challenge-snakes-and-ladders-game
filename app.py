@@ -4,6 +4,7 @@ from xml.etree import ElementTree as ET
 from collections import deque
 
 logger = logging.getLogger(__name__)
+app = Flask(__name__)
 
 SQUARE_SIZE = 32  # as per problem statement
 
